@@ -5,7 +5,6 @@ import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, Validati
 import { LanguageService } from '../../services/language.service';
 import { AuthService } from '../../services/auth.service';
 
-// Custom validator to check if passwords match
 export function passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password');
   const confirmPassword = control.get('confirmPassword');
@@ -47,7 +46,7 @@ export class SignupPageComponent {
     const { fullName, email, password } = this.signupForm.value;
 
     try {
-      const { error } = await this.authService.signUp({email: email!, password: password!}, fullName!);
+      const { error } = await this.authService.signUp(email!, password!, fullName!);
       if (error) {
         throw new Error(error.message);
       }
