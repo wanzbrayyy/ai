@@ -21,41 +21,35 @@ export class AuthService {
         this.isLoggedIn.set(false);
       }
     });
-    // Initial check
     this.getSession();
   }
 
   private async getSession() {
     const { data } = await this.supabase.auth.getSession();
     if (data.session) {
-       this.currentUser.set(data.session.user);
-       this.isLoggedIn.set(true);
+      this.currentUser.set(data.session.user);
+      this.isLoggedIn.set(true);
     }
   }
 
-  signIn(credentials: SignInWithPasswordCredentials, rememberMe: boolean): Promise<{ error: AuthError | null }> {
-    return this.supabase.auth.signInWithPassword({
-      ...credentials,
-      options: {
-        // Supabase uses localStorage by default. If 'rememberMe' is false, we can't easily switch to session storage
-        // without more complex logic. The default behavior is usually desirable.
-        // This is a placeholder for how you might handle it if you had more complex requirements.
-      }
-    });
+  async signIn(email: string, password: string, rememberMe: boolean): Promise<{ error: AuthError | null }> {
+    const credentials: SignInWithPasswordCredentials = { email, password };
+    const { error } = await this.supabase.auth.signInWithPassword(credentials);
+    if (!error && rememberMe) localStorage.setItem('rememberMe', 'true');
+    else localStorage.removeItem('rememberMe');
+    return { error };
   }
 
-  signUp(credentials: SignUpWithPasswordCredentials, fullName: string): Promise<{ error: AuthError | null }> {
-    return this.supabase.auth.signUp({
+  async signUp(email: string, password: string, fullName: string): Promise<{ error: AuthError | null }> {
+    const credentials: SignUpWithPasswordCredentials = { email, password };
+    const { error } = await this.supabase.auth.signUp({
       ...credentials,
-      options: {
-        data: {
-          full_name: fullName
-        }
-      }
+      options: { data: { full_name: fullName } }
     });
+    return { error };
   }
 
-  signOut(): Promise<{ error: AuthError | null }> {
+  async signOut(): Promise<{ error: AuthError | null }> {
     return this.supabase.auth.signOut();
   }
 }
