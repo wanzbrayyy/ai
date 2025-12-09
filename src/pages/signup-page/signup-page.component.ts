@@ -1,61 +1,24 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { LanguageService } from '../../services/language.service';
-import { AuthService } from '../../services/auth.service';
-
-export function passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
-  const password = control.get('password');
-  const confirmPassword = control.get('confirmPassword');
-  return password && confirmPassword && password.value !== confirmPassword.value ? { passwordsMismatch: true } : null;
-}
+import { Component } from '@angular/core'
+import { AuthService } from '../../app/services/auth.service'
 
 @Component({
   selector: 'app-signup-page',
-  standalone: true,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './signup-page.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./signup-page.component.css']
 })
 export class SignupPageComponent {
-  languageService = inject(LanguageService);
-  private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  
-  loading = signal(false);
-  errorMessage = signal<string | null>(null);
+  email = ''
+  password = ''
+  fullName = ''
 
-  signupForm = this.fb.group({
-    fullName: ['', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    confirmPassword: ['', [Validators.required]]
-  }, { validators: passwordsMatchValidator });
+  constructor(private authService: AuthService) {}
 
-  async onSubmit(): Promise<void> {
-    if (this.signupForm.invalid) {
-      this.errorMessage.set(this.languageService.translate('invalidForm'));
-      return;
-    }
-    
-    this.loading.set(true);
-    this.errorMessage.set(null);
-    
-    const { fullName, email, password } = this.signupForm.value;
-
+  async onSubmit() {
     try {
-      const { error } = await this.authService.signUp(email!, password!, fullName!);
-      if (error) {
-        throw new Error(error.message);
-      }
-      this.router.navigate(['/dashboard']);
-    } catch (error: any) {
-      this.errorMessage.set(this.languageService.translate('signupFailed'));
-      console.error('Signup error:', error.message);
-    } finally {
-      this.loading.set(false);
+      const res = await this.authService.signUp(this.email, this.password, this.fullName)
+      console.log('Signup success:', res)
+    } catch (err) {
+      console.error('Signup error:', err)
     }
   }
 }
