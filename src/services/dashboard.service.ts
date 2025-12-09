@@ -64,6 +64,8 @@ export class DashboardService {
         .insert({
             user_id: user.id,
             api_key: newKey,
+            requests_today: 0,
+            last_used_at: null
         })
         .select()
         .single();

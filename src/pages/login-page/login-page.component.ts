@@ -39,7 +39,7 @@ export class LoginPageComponent {
     const { email, password, rememberMe } = this.loginForm.value;
 
     try {
-      const { error } = await this.authService.signIn(email!, password!, rememberMe!);
+      const { error } = await this.authService.signIn({email: email!, password: password!}, rememberMe!);
       if (error) {
         throw new Error(error.message);
       }

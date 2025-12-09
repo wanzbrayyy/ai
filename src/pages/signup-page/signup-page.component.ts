@@ -47,7 +47,7 @@ export class SignupPageComponent {
     const { fullName, email, password } = this.signupForm.value;
 
     try {
-      const { error } = await this.authService.signUp(email!, password!, fullName!);
+      const { error } = await this.authService.signUp({email: email!, password: password!}, fullName!);
       if (error) {
         throw new Error(error.message);
       }
