@@ -1,0 +1,18 @@
+<footer id="contact" class="bg-black border-t border-gray-900">
+  <div class="container mx-auto px-6 py-8">
+    <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+      <div class="flex items-center space-x-2">
+        <i class="fas fa-brain text-sky-400"></i>
+        <span class="text-lg font-semibold text-white">AI Wanzofc</span>
+      </div>
+      <div class="flex space-x-6">
+        @for (social of socials; track social.icon) {
+          <a [href]="social.url" class="text-slate-400 hover:text-sky-400 transition-colors duration-300">
+            <i class="{{ social.icon }} text-xl"></i>
+          </a>
+        }
+      </div>
+      <p class="text-slate-500 text-sm">&copy; {{ currentYear }} AI Wanzofc. {{ languageService.translate('allRightsReserved') }}</p>
+    </div>
+  </div>
+</footer>

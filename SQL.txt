@@ -1,0 +1,74 @@
+-- ### SQL Schema for AI Wanzofc ###
+
+-- 1. PROFILES TABLE
+-- This table stores public user data. It's linked to the auth.users table.
+CREATE TABLE public.profiles (
+  id UUID NOT NULL PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  full_name TEXT,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- RLS Policy: Allow users to view their own profile.
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can view their own profile."
+ON public.profiles FOR SELECT
+USING (auth.uid() = id);
+
+-- RLS Policy: Allow users to update their own profile.
+CREATE POLICY "Users can update their own profile."
+ON public.profiles FOR UPDATE
+USING (auth.uid() = id);
+
+-- Function to create a profile automatically when a new user signs up.
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, full_name)
+  VALUES (new.id, new.raw_user_meta_data->>'full_name');
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger to call the function on new user creation.
+CREATE TRIGGER on_auth_user_created
+AFTER INSERT ON auth.users
+FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+
+
+-- 2. API KEYS TABLE
+-- This table stores API keys for each user, now with daily request tracking.
+CREATE TABLE public.api_keys (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  api_key TEXT NOT NULL UNIQUE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  requests_today INT DEFAULT 0,
+  last_used_at TIMESTAMPTZ
+);
+
+-- RLS Policy: Enable RLS for the api_keys table.
+ALTER TABLE public.api_keys ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policy: Allow users to view their own API keys.
+CREATE POLICY "Users can view their own API keys."
+ON public.api_keys FOR SELECT
+USING (auth.uid() = user_id);
+
+-- RLS Policy: Allow users to insert new API keys for themselves.
+CREATE POLICY "Users can create API keys for themselves."
+ON public.api_keys FOR INSERT
+WITH CHECK (auth.uid() = user_id);
+
+-- NOTE FOR BACKEND IMPLEMENTATION:
+-- To enforce the daily limit, you need a mechanism to reset `requests_today` to 0 every day.
+-- This is typically done with a cron job or a database function.
+-- Example using pg_cron:
+-- SELECT cron.schedule('0 0 * * *', $$UPDATE public.api_keys SET requests_today = 0;$$);
+
+
+-- Instructions for Supabase SQL Editor:
+-- 1. Navigate to the SQL Editor in your Supabase project dashboard.
+-- 2. Click "+ New query".
+-- 3. Copy and paste the entire content of this file into the editor.
+-- 4. Click "RUN" to execute the script.
+-- 5. This will set up your database tables and security policies correctly.

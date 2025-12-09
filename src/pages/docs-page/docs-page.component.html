@@ -1,0 +1,70 @@
+<div class="min-h-[calc(100vh-140px)] bg-[#0a0a0a] py-12 md:py-20">
+  <div class="container mx-auto px-6">
+
+    <!-- Page Header -->
+    <div class="text-center mb-16" data-aos="fade-down">
+      <h1 class="text-4xl md:text-5xl font-extrabold text-white">
+        {{ languageService.translate('docsTitle') }}
+      </h1>
+      <p class="text-slate-400 mt-4 max-w-3xl mx-auto text-lg">
+        {{ languageService.translate('docsSubtitle') }}
+      </p>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="max-w-5xl mx-auto space-y-12">
+      
+      <!-- API Endpoint -->
+      <div data-aos="fade-up">
+        <h2 class="text-2xl font-bold text-white mb-4 border-l-4 border-sky-500 pl-4">{{ languageService.translate('apiEndpoint') }}</h2>
+        <div class="relative bg-gray-900/50 border border-gray-800 rounded-lg p-4 font-mono text-sky-300">
+          POST <span class="text-white">http://146.190.98.149:3000/chat</span>
+        </div>
+      </div>
+      
+      <!-- Authentication -->
+      <div data-aos="fade-up">
+        <h2 class="text-2xl font-bold text-white mb-4 border-l-4 border-sky-500 pl-4">{{ languageService.translate('authentication') }}</h2>
+        <p class="text-slate-400 leading-relaxed">
+          {{ languageService.translate('authDesc') }}
+        </p>
+      </div>
+
+      <!-- Models List -->
+      <div data-aos="fade-up">
+        <h2 class="text-2xl font-bold text-white mb-2 border-l-4 border-sky-500 pl-4">{{ languageService.translate('modelsList') }}</h2>
+        <p class="text-slate-400 leading-relaxed mb-4">
+            {{ languageService.translate('modelsListDesc') }}
+        </p>
+        <div class="relative">
+          <button (click)="copyToClipboard(modelsJson(), 'json')" class="absolute top-3 right-3 bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1 rounded-md text-sm transition-colors">
+             @if (copiedState() === 'json') {
+                <i class="fas fa-check text-green-400 mr-2"></i> {{ languageService.translate('copied') }}
+             } @else {
+                <i class="far fa-copy mr-2"></i> {{ languageService.translate('copy') }}
+             }
+          </button>
+          <pre class="language-json"><code>{{ modelsJson() }}</code></pre>
+        </div>
+      </div>
+
+      <!-- Request Example -->
+      <div data-aos="fade-up">
+        <h2 class="text-2xl font-bold text-white mb-2 border-l-4 border-sky-500 pl-4">{{ languageService.translate('requestExample') }}</h2>
+         <p class="text-slate-400 leading-relaxed mb-4">
+            {{ languageService.translate('requestExampleDesc') }}
+        </p>
+        <div class="relative">
+          <button (click)="copyToClipboard(curlCommand, 'curl')" class="absolute top-3 right-3 bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1 rounded-md text-sm transition-colors">
+            @if (copiedState() === 'curl') {
+                <i class="fas fa-check text-green-400 mr-2"></i> {{ languageService.translate('copied') }}
+             } @else {
+                <i class="far fa-copy mr-2"></i> {{ languageService.translate('copy') }}
+             }
+          </button>
+          <pre class="language-bash"><code>{{ curlCommand }}</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<section id="about" class="py-24">
+  <div class="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
+    <div class="md:w-1/2" data-aos="fade-right">
+      <div class="w-full max-w-md md:max-w-lg h-auto mx-auto">
+        <div #lottieContainer></div>
+      </div>
+    </div>
+    <div class="md:w-1/2 text-center md:text-left" data-aos="fade-left">
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-6" [innerHTML]="languageService.translate('aboutTitle')">
+      </h2>
+      <p class="text-slate-400 leading-relaxed mb-4">
+        {{ languageService.translate('aboutDesc1') }}
+      </p>
+      <p class="text-slate-400 leading-relaxed">
+        {{ languageService.translate('aboutDesc2') }}
+      </p>
+    </div>
+  </div>
+</section>

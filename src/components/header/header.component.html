@@ -1,0 +1,91 @@
+<header class="sticky top-0 z-50 bg-black/30 backdrop-blur-lg border-b border-gray-800">
+  <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+    <a (click)="handleNavClick({label: 'home', type: 'scroll', fragment: 'home'})" class="flex items-center space-x-2 cursor-pointer">
+      <i class="fas fa-brain text-sky-400 text-2xl"></i>
+      <h1 class="text-2xl font-bold text-white">AI Wanzofc</h1>
+    </a>
+    
+    <!-- Desktop Nav -->
+    <div class="hidden md:flex items-center space-x-6">
+      @for (item of navItems(); track item.label) {
+        @if (item.type === 'scroll') {
+          <a (click)="scrollTo(item.fragment!)" class="nav-link text-slate-300 hover:text-sky-400 transition-colors duration-300 relative cursor-pointer">{{ item.label }}</a>
+        } @else {
+          <a [routerLink]="item.path" routerLinkActive="text-sky-400 font-semibold" [routerLinkActiveOptions]="{exact: true}" class="nav-link text-slate-300 hover:text-sky-400 transition-colors duration-300 relative">{{ item.label }}</a>
+        }
+      }
+    </div>
+    
+    <div class="hidden md:flex items-center space-x-4">
+       <!-- Language Switcher -->
+      <div class="relative">
+        <button (click)="toggleLanguageDropdown()" class="text-white hover:text-sky-400 transition-colors duration-300 text-xl">
+          <i class="fas fa-globe"></i>
+        </button>
+        <div class="absolute right-0 mt-2 w-40 bg-gray-900 border border-gray-700 rounded-lg shadow-xl origin-top-right transition-all duration-200 ease-out"
+             [class.opacity-100]="isLanguageDropdownOpen()"
+             [class.scale-100]="isLanguageDropdownOpen()"
+             [class.opacity-0]="!isLanguageDropdownOpen()"
+             [class.scale-95]="!isLanguageDropdownOpen()"
+             [class.pointer-events-none]="!isLanguageDropdownOpen()">
+          <a (click)="changeLanguage('en')" class="flex items-center px-4 py-2 text-sm text-slate-200 hover:bg-gray-800 cursor-pointer rounded-t-lg">
+            <span class="flag-icon flag-icon-gb mr-2"></span> English
+          </a>
+          <a (click)="changeLanguage('id')" class="flex items-center px-4 py-2 text-sm text-slate-200 hover:bg-gray-800 cursor-pointer rounded-b-lg">
+            <span class="flag-icon flag-icon-id mr-2"></span> Indonesia
+          </a>
+        </div>
+      </div>
+
+      @if (isLoggedIn()) {
+        <a routerLink="/dashboard" routerLinkActive="text-sky-400 font-semibold" class="text-slate-300 hover:text-sky-400 transition-colors duration-300">{{ languageService.translate('dashboard') }}</a>
+        <button (click)="onLogout()" class="flex items-center space-x-2 bg-red-500 hover:bg-red-600 text-white font-semibold px-5 py-2 rounded-lg transition-transform duration-300 hover:scale-105">
+          <span>{{ languageService.translate('logout') }}</span>
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      } @else {
+        <a routerLink="/login" class="text-slate-300 hover:text-sky-400 transition-colors duration-300">{{ languageService.translate('login') }}</a>
+        <a routerLink="/signup" class="flex items-center space-x-2 bg-sky-500 hover:bg-sky-600 text-white font-semibold px-5 py-2 rounded-lg transition-transform duration-300 hover:scale-105">
+          <span>{{ languageService.translate('signup') }}</span>
+          <i class="fas fa-user-plus"></i>
+        </a>
+      }
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button (click)="toggleMobileMenu()" class="md:hidden text-white text-2xl z-50">
+      <i [class]="isMobileMenuOpen() ? 'fas fa-times' : 'fas fa-bars'"></i>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  @if (isMobileMenuOpen()) {
+    <div class="md:hidden absolute top-full left-0 w-full bg-black/80 backdrop-blur-lg animate-fade-in">
+      <div class="container mx-auto px-6 py-4 flex flex-col space-y-4">
+        @for (item of navItems(); track item.label) {
+          <a (click)="handleNavClick(item)" class="text-slate-200 hover:text-sky-400 text-lg py-2 text-center cursor-pointer">{{ item.label }}</a>
+        }
+        <hr class="border-gray-700">
+        <div class="flex flex-col items-center space-y-4 pt-2">
+           <div class="flex space-x-4">
+            <button (click)="changeLanguage('en')" class="text-slate-200 p-2 rounded-md hover:bg-gray-700">English</button>
+            <button (click)="changeLanguage('id')" class="text-slate-200 p-2 rounded-md hover:bg-gray-700">Indonesia</button>
+          </div>
+          @if (isLoggedIn()) {
+            <a routerLink="/dashboard" (click)="closeMobileMenu()" class="text-slate-200 hover:text-sky-400 w-full text-center py-2">{{ languageService.translate('dashboard') }}</a>
+            <button (click)="onLogout()" class="w-full text-center flex justify-center items-center space-x-2 bg-red-500 hover:bg-red-600 text-white font-semibold px-5 py-3 rounded-lg">
+              <span>{{ languageService.translate('logout') }}</span>
+              <i class="fas fa-sign-out-alt"></i>
+            </button>
+          } @else {
+            <a routerLink="/login" (click)="closeMobileMenu()" class="text-slate-200 hover:text-sky-400 w-full text-center py-2">{{ languageService.translate('login') }}</a>
+            <a routerLink="/signup" (click)="closeMobileMenu()" class="w-full text-center flex justify-center items-center space-x-2 bg-sky-500 hover:bg-sky-600 text-white font-semibold px-5 py-3 rounded-lg">
+              <span>{{ languageService.translate('signup') }}</span>
+              <i class="fas fa-user-plus"></i>
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</header>

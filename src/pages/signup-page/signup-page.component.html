@@ -1,0 +1,81 @@
+<div class="flex items-center justify-center min-h-[calc(100vh-200px)] py-12 px-4 sm:px-6 lg:px-8">
+  <div class="w-full max-w-md space-y-8 p-10 bg-gray-900/50 border border-gray-800 rounded-2xl shadow-2xl" data-aos="zoom-in-up">
+    <div>
+      <div class="flex justify-center">
+         <i class="fas fa-user-plus text-sky-400 text-5xl"></i>
+      </div>
+      <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-white">
+        {{ languageService.translate('createAnAccount') }}
+      </h2>
+      <p class="mt-2 text-center text-sm text-gray-400">
+        {{ languageService.translate('alreadyHaveAccount') }}
+        <a routerLink="/login" class="font-medium text-sky-400 hover:text-sky-500">
+          {{ languageService.translate('login') }}
+        </a>
+      </p>
+    </div>
+    <form class="mt-8 space-y-6" [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+      <div class="rounded-md shadow-sm -space-y-px">
+        <div>
+          <label for="full-name" class="sr-only">{{ languageService.translate('fullName') }}</label>
+          <input id="full-name" name="name" type="text" autocomplete="name" required
+            formControlName="fullName"
+            class="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-700 bg-gray-800 px-3 py-3 text-white placeholder-gray-500 focus:z-10 focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
+            [placeholder]="languageService.translate('fullName')">
+        </div>
+        <div>
+          <label for="email-address-signup" class="sr-only">{{ languageService.translate('emailAddress') }}</label>
+          <input id="email-address-signup" name="email" type="email" autocomplete="email" required
+            formControlName="email"
+            class="relative block w-full appearance-none rounded-none border border-gray-700 bg-gray-800 px-3 py-3 text-white placeholder-gray-500 focus:z-10 focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
+            [placeholder]="languageService.translate('emailAddress')">
+        </div>
+         <div>
+          <label for="password-signup" class="sr-only">{{ languageService.translate('password') }}</label>
+          <input id="password-signup" name="password" type="password" autocomplete="new-password" required
+            formControlName="password"
+            class="relative block w-full appearance-none rounded-none border border-gray-700 bg-gray-800 px-3 py-3 text-white placeholder-gray-500 focus:z-10 focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
+            [placeholder]="languageService.translate('password')">
+        </div>
+        <div>
+          <label for="confirm-password" class="sr-only">{{ languageService.translate('confirmPassword') }}</label>
+          <input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password" required
+            formControlName="confirmPassword"
+            class="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-700 bg-gray-800 px-3 py-3 text-white placeholder-gray-500 focus:z-10 focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
+            [placeholder]="languageService.translate('confirmPassword')">
+        </div>
+      </div>
+       
+       @if (signupForm.errors?.['passwordsMismatch'] && (signupForm.get('confirmPassword')?.touched || signupForm.get('confirmPassword')?.dirty)) {
+          <div class="text-red-400 text-sm text-center">
+             {{ languageService.translate('passwordsMismatch') }}
+          </div>
+       }
+
+      @if (errorMessage()) {
+        <div class="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg text-sm text-center">
+          <p>{{ errorMessage() }}</p>
+        </div>
+      }
+
+      <div>
+        <button type="submit"
+          [disabled]="loading()"
+          class="group relative flex w-full justify-center rounded-md border border-transparent bg-sky-600 py-3 px-4 text-sm font-semibold text-white hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:bg-sky-800 disabled:cursor-not-allowed">
+           <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+            @if (!loading()) {
+              <i class="fas fa-user-check text-sky-300 group-hover:text-sky-200"></i>
+            }
+          </span>
+           @if (loading()) {
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+           }
+          {{ loading() ? languageService.translate('signingUp') : languageService.translate('signup') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

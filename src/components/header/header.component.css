@@ -1,0 +1,41 @@
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #38bdf8; /* sky-400 */
+  transform-origin: bottom right;
+  transition: transform 0.3s ease-out;
+}
+
+.nav-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* Style for active router links */
+a[routerLinkActive].text-sky-400::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+
+.flag-icon {
+    width: 1.25em;
+    line-height: 1em;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 1em;
+}
+
+.flag-icon-gb {
+    background-image: url('https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/flags/4x3/gb.svg');
+}
+
+.flag-icon-id {
+    background-image: url('https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/flags/4x3/id.svg');
+}

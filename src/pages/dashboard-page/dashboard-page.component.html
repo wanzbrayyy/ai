@@ -1,0 +1,130 @@
+<div class="min-h-[calc(100vh-140px)] bg-[#101010] py-12">
+  <div class="container mx-auto px-6">
+    
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-10" data-aos="fade-down">
+      <div>
+        <h1 class="text-3xl font-bold text-white">{{ languageService.translate('welcomeBack') }},</h1>
+        <p class="text-sky-400 font-medium">{{ currentUser()?.email }}</p>
+      </div>
+      <button (click)="onLogout()" class="w-full md:w-auto flex items-center justify-center space-x-2 bg-red-500 hover:bg-red-600 text-white font-semibold px-5 py-2 rounded-lg transition-transform duration-300 hover:scale-105">
+        <span>{{ languageService.translate('logout') }}</span>
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+
+    <!-- Stats and Models Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+      
+      <!-- API Usage Card -->
+      <div class="lg:col-span-1 bg-gray-900/50 border border-gray-800 p-6 rounded-2xl" data-aos="fade-right">
+        <h2 class="text-xl font-semibold text-white mb-4">{{ languageService.translate('apiUsage') }}</h2>
+        <div class="space-y-4">
+          <div class="text-center">
+            <p class="text-4xl font-bold gradient-text">{{ requestsUsedToday() }}</p>
+            <p class="text-slate-400 text-sm">{{ languageService.translate('requestsUsed') }}</p>
+          </div>
+          <div class="relative pt-1">
+            <div class="flex mb-2 items-center justify-between">
+              <div>
+                <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-sky-600 bg-sky-200">
+                  {{ usagePercentage() | number:'1.0-0' }}%
+                </span>
+              </div>
+              <div class="text-right">
+                <span class="text-xs font-semibold inline-block text-slate-400">
+                  {{ dailyLimit }} {{ languageService.translate('dailyLimit') }}
+                </span>
+              </div>
+            </div>
+            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-slate-700">
+              <div [style.width.%]="usagePercentage()" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-sky-500 transition-all duration-500"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Available Models Card -->
+      <div class="lg:col-span-2 bg-gray-900/50 border border-gray-800 p-6 rounded-2xl" data-aos="fade-left">
+        <h2 class="text-xl font-semibold text-white mb-4">{{ languageService.translate('availableModels') }}</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-300">
+            <thead class="border-b border-gray-700 text-xs uppercase text-slate-400">
+              <tr>
+                <th scope="col" class="px-4 py-3">{{ languageService.translate('modelName') }}</th>
+                <th scope="col" class="px-4 py-3">{{ languageService.translate('size') }}</th>
+                <th scope="col" class="px-4 py-3">{{ languageService.translate('modified') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (model of models(); track model.name) {
+                <tr class="border-b border-gray-800">
+                  <td class="px-4 py-3 font-medium text-white">{{ model.name }}</td>
+                  <td class="px-4 py-3">{{ model.size }}</td>
+                  <td class="px-4 py-3">{{ model.modified }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- API Keys Management -->
+    <div class="bg-gray-900/50 border border-gray-800 p-6 rounded-2xl" data-aos="fade-up">
+      <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
+        <h2 class="text-xl font-semibold text-white">{{ languageService.translate('apiKeys') }}</h2>
+        <button (click)="generateNewKey()" [disabled]="generatingKey()"
+                class="w-full md:w-auto flex items-center justify-center space-x-2 bg-sky-500 hover:bg-sky-600 text-white font-semibold px-5 py-2 rounded-lg transition-transform duration-300 hover:scale-105 disabled:bg-sky-800 disabled:cursor-not-allowed">
+           @if (generatingKey()) {
+            <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+           }
+          <i class="fas fa-plus mr-2" [class.hidden]="generatingKey()"></i>
+          {{ generatingKey() ? languageService.translate('generating') : languageService.translate('generateKey') }}
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        @if (apiKeys().length > 0) {
+          <table class="w-full text-left text-sm text-slate-300">
+            <thead class="border-b border-gray-700 text-xs uppercase text-slate-400">
+              <tr>
+                <th scope="col" class="px-4 py-3">{{ languageService.translate('key') }}</th>
+                <th scope="col" class="px-4 py-3">{{ languageService.translate('created') }}</th>
+                <th scope="col" class="px-4 py-3">{{ languageService.translate('todaysRequests') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (apiKey of apiKeys(); track apiKey.id) {
+                <tr class="border-b border-gray-800">
+                  <td class="px-4 py-3 font-mono text-white flex items-center space-x-3">
+                    <span>{{ apiKey.api_key }}</span>
+                    <button (click)="copyToClipboard(apiKey.api_key)" class="text-slate-400 hover:text-white transition-colors">
+                       @if (copiedKey() === apiKey.api_key) {
+                         <i class="fas fa-check text-green-400"></i>
+                       } @else {
+                         <i class="far fa-copy"></i>
+                       }
+                    </button>
+                  </td>
+                  <td class="px-4 py-3">{{ apiKey.created_at | date:'medium' }}</td>
+                  <td class="px-4 py-3">{{ apiKey.requests_today }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <div class="text-center py-12 border-2 border-dashed border-gray-700 rounded-lg">
+            <i class="fas fa-key text-4xl text-slate-600 mb-4"></i>
+            <p class="text-slate-400">{{ languageService.translate('noKeys') }}</p>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>
